@@ -1,6 +1,7 @@
 const BRAND = "GameFlex";
+const DEFAULT_TITLE = "GameFlex | The World's Premier Gaming Ecosystem";
 const DEFAULT_DESCRIPTION =
-  "The world's premier gaming ecosystem. Discover the complete gaming experience on one platform.";
+  "The world's premier gaming ecosystem. Discover tournaments, squads, creator culture, and competitive gaming experiences in one platform.";
 
 export interface PageSeoOptions {
   title?: string;
@@ -22,7 +23,7 @@ export function pageSeo({
   image,
 }: PageSeoOptions = {}): PageSeoResult {
   const clean = title?.replace(/\s*\|\s*GameFlex.*$/i, "").trim();
-  const fullTitle = clean || "The World's Premier Gaming Ecosystem";
+  const fullTitle = clean || DEFAULT_TITLE;
   const desc = description || DEFAULT_DESCRIPTION;
 
   const meta: Array<Record<string, string>> = [
@@ -30,8 +31,11 @@ export function pageSeo({
     { name: "description", content: desc },
     { property: "og:title", content: `${fullTitle} | ${BRAND}` },
     { property: "og:description", content: desc },
+    { property: "og:site_name", content: BRAND },
     { property: "og:type", content: "website" },
+    { property: "og:url", content: "https://gameflex.co.ke" },
     { name: "twitter:card", content: "summary_large_image" },
+    { name: "twitter:site", content: "@GameFlex" },
   ];
 
   if (image) {

@@ -1,7 +1,7 @@
 {
-  "name": "GameFlex Esports",
+  "name": "GameFlex",
   "short_name": "GameFlex",
-  "description": "Compete in FIFA, Mobile Legends, and Call of Duty tournaments to win cash prizes.",
+  "description": "The world's premier gaming ecosystem.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",

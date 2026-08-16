@@ -87,38 +87,22 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { name: "theme-color", content: "#0b0b12" },
-      { title: "GameFlex" },
-      { property: "og:title", content: "GameFlex" },
-      {
-        name: "description",
-        content:
-          "GameFlex is a technology company engineering products, communities, and experiences that shape the future of gaming and beyond.",
-      },
-      { name: "twitter:title", content: "GameFlex" },
-      {
-        property: "og:description",
-        content:
-          "GameFlex is a technology company engineering products, communities, and experiences that shape the future of gaming and beyond.",
-      },
-      {
-        name: "twitter:description",
-        content:
-          "GameFlex is a technology company engineering products, communities, and experiences that shape the future of gaming and beyond.",
-      },
-      {
-        property: "og:image",
-        content:
-          "https://storage.googleapis.com/gpt-engineer-file-uploads/533sZ53rXARhEQvGSydswB00et92/social-images/social-1785632948620-social-image.webp",
-      },
-      {
-        name: "twitter:image",
-        content:
-          "https://storage.googleapis.com/gpt-engineer-file-uploads/533sZ53rXARhEQvGSydswB00et92/social-images/social-1785632948620-social-image.webp",
-      },
-      { name: "twitter:card", content: "summary_large_image" },
+      { title: "GameFlex | The World's Premier Gaming Ecosystem" },
+      { name: "description", content: "The world's premier gaming ecosystem." },
+      { property: "og:title", content: "GameFlex | The World's Premier Gaming Ecosystem" },
+      { property: "og:description", content: "The world's premier gaming ecosystem." },
+      { property: "og:site_name", content: "GameFlex" },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://gameflex.co.ke" },
+      { name: "twitter:title", content: "GameFlex | The World's Premier Gaming Ecosystem" },
+      { name: "twitter:description", content: "The world's premier gaming ecosystem." },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:site", content: "@GameFlex" },
+      { property: "og:image", content: "https://gameflex.co.ke/icons/icon-512.png" },
+      { name: "twitter:image", content: "https://gameflex.co.ke/icons/icon-512.png" },
     ],
     links: [
+      { rel: "canonical", href: "https://gameflex.co.ke" },
       { rel: "stylesheet", href: appCss },
       { rel: "apple-touch-icon", href: "/icons/apple-touch-icon.png" },
       { rel: "manifest", href: "/manifest.webmanifest" },

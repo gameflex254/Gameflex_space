@@ -160,26 +160,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     [generateReferralCode],
   );
 
-  const checkAdminRole = useCallback(async (userId: string, userEmail?: string | null) => {
-    const SUPER_ADMIN_EMAILS = [
-      "gameflex254@gmail.com",
-      (
-        (typeof process !== "undefined" && process.env?.DEFAULT_ADMIN_EMAIL) ||
-        (typeof import.meta !== "undefined" && import.meta.env?.VITE_DEFAULT_ADMIN_EMAIL) ||
-        ""
-      )
-        .toLowerCase()
-        .trim(),
-    ].filter(Boolean);
-
-    const cleanEmail = userEmail ? userEmail.toLowerCase().trim() : "";
-    const isSuperAdmin = cleanEmail !== "" && SUPER_ADMIN_EMAILS.includes(cleanEmail);
-
-    if (isSuperAdmin) {
-      setIsAdmin(true);
-      return;
-    }
-
+  const checkAdminRole = useCallback(async (userId: string, _userEmail?: string | null) => {
+    // Authorization is determined by the database role model, not by a browser-visible
+    // environment variable. Keep any bootstrap/default admin email server-side only.
     const { data } = await backend
       .from("user_roles")
       .select("role")

@@ -1,16 +1,7 @@
 import { backend } from "@/backend";
 import type { Session, User } from "@supabase/supabase-js";
 
-export const SUPER_ADMIN_EMAILS = [
-  "gameflex254@gmail.com",
-  (
-    (typeof process !== "undefined" && process.env?.DEFAULT_ADMIN_EMAIL) ||
-    (typeof import.meta !== "undefined" && import.meta.env?.VITE_DEFAULT_ADMIN_EMAIL) ||
-    ""
-  )
-    .toLowerCase()
-    .trim(),
-].filter(Boolean);
+export const SUPER_ADMIN_EMAILS: string[] = [];
 
 export class AuthService {
   isSuperAdmin(email?: string | null): boolean {

@@ -1,9 +1,11 @@
-/**
- * Storage bucket names, provider-agnostic.
- *
- * These are plain object keys/prefixes, so they work the same whether storage
- * is served by the managed backend, S3, R2 or a self-hosted gateway.
- */
+export {
+  GAMEFLEX_BUCKETS,
+  GAMEFLEX_BUCKET_LIST,
+  GAMEFLEX_BUCKET_REGISTRY,
+  getBucketConfig,
+  isGameflexBucket,
+} from "@/storage/buckets";
+
 export const STORAGE_BUCKETS = {
   STATUS_MEDIA: "status-media",
   AVATARS: "avatars",
