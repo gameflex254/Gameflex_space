@@ -1,4 +1,4 @@
-# GameFlex — Cloud Game Hub
+# GameFlex
 
 A production-ready competitive gaming platform: tournaments, squads, matches,
 wallets, leaderboards, messaging and a social feed.
@@ -15,7 +15,7 @@ Built with **TanStack Start** (React 19, SSR), **Vite**, **Tailwind CSS v4**,
 
 ```sh
 git clone <this-repository-url>
-cd cloud-game-hub
+cd gameflex
 npm install          # or: bun install
 cp .env.example .env # fill in your own values
 npm run dev

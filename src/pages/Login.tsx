@@ -18,6 +18,7 @@ import {
 import { useAuth } from "@/lib/auth-context";
 import { useToast } from "@/hooks/use-toast";
 import { GoogleAuthButton, AuthDivider } from "@/components/auth/GoogleAuthButton";
+import { siteConfig } from "@/config/site";
 
 const loginSchema = z.object({
   phoneOrEmail: z.string().min(1, "Phone number or email is required"),
@@ -46,7 +47,14 @@ export default function Login() {
     try {
       // Determine if input is email or phone
       const isEmail = data.phoneOrEmail.includes("@");
-      const email = isEmail ? data.phoneOrEmail : `${data.phoneOrEmail}@gameflex.app`;
+      const loginDomain = (() => {
+        try {
+          return new URL(siteConfig.url).hostname;
+        } catch {
+          return "gameflex.co.ke";
+        }
+      })();
+      const email = isEmail ? data.phoneOrEmail : `${data.phoneOrEmail}@${loginDomain}`;
 
       const { error, needsEmailConfirmation } = await login(email, data.password);
       if (needsEmailConfirmation) setUnconfirmedEmail(email);

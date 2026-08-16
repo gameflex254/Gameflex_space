@@ -1,4 +1,24 @@
 -- ============ STORAGE POLICIES ============
+DO $$
+BEGIN
+  DROP POLICY IF EXISTS "public_media_read" ON storage.objects;
+  DROP POLICY IF EXISTS "public_media_insert" ON storage.objects;
+  DROP POLICY IF EXISTS "public_media_update_own" ON storage.objects;
+  DROP POLICY IF EXISTS "public_media_delete_own" ON storage.objects;
+  DROP POLICY IF EXISTS "tournament_images_admin_write" ON storage.objects;
+  DROP POLICY IF EXISTS "tournament_images_admin_update" ON storage.objects;
+  DROP POLICY IF EXISTS "tournament_images_admin_delete" ON storage.objects;
+  DROP POLICY IF EXISTS "screenshots_owner_read" ON storage.objects;
+  DROP POLICY IF EXISTS "screenshots_owner_write" ON storage.objects;
+  DROP POLICY IF EXISTS "screenshots_owner_delete" ON storage.objects;
+  DROP POLICY IF EXISTS "messages_owner_read" ON storage.objects;
+  DROP POLICY IF EXISTS "messages_owner_write" ON storage.objects;
+  DROP POLICY IF EXISTS "messages_owner_delete" ON storage.objects;
+  DROP POLICY IF EXISTS "backups_admin_read" ON storage.objects;
+  DROP POLICY IF EXISTS "backups_admin_write" ON storage.objects;
+  DROP POLICY IF EXISTS "backups_admin_delete" ON storage.objects;
+END $$;
+
 CREATE POLICY "public_media_read" ON storage.objects FOR SELECT
   USING (bucket_id IN ('avatars','status-media','tournament-images','reels','flex'));
 
@@ -74,20 +94,27 @@ CREATE TRIGGER profiles_protect_columns
   BEFORE UPDATE ON public.profiles
   FOR EACH ROW EXECUTE FUNCTION public.protect_profile_columns();
 
+DROP POLICY IF EXISTS "profiles_admin_manage" ON public.profiles;
 CREATE POLICY "profiles_admin_manage" ON public.profiles FOR ALL TO authenticated
   USING (public.has_role(auth.uid(),'admin')) WITH CHECK (public.has_role(auth.uid(),'admin'));
 
 DROP POLICY IF EXISTS "leaderboard_own_write" ON public.leaderboard_stats;
+DROP POLICY IF EXISTS "leaderboard_admin_write" ON public.leaderboard_stats;
 CREATE POLICY "leaderboard_admin_write" ON public.leaderboard_stats FOR ALL TO authenticated
   USING (public.has_role(auth.uid(),'admin')) WITH CHECK (public.has_role(auth.uid(),'admin'));
 
 DROP POLICY IF EXISTS "rewards_own" ON public.rewards;
+DROP POLICY IF EXISTS "rewards_read_own" ON public.rewards;
+DROP POLICY IF EXISTS "rewards_admin_write" ON public.rewards;
 CREATE POLICY "rewards_read_own" ON public.rewards FOR SELECT TO authenticated
   USING (auth.uid() = user_id OR public.has_role(auth.uid(),'admin'));
 CREATE POLICY "rewards_admin_write" ON public.rewards FOR ALL TO authenticated
   USING (public.has_role(auth.uid(),'admin')) WITH CHECK (public.has_role(auth.uid(),'admin'));
 
 DROP POLICY IF EXISTS "payments_own" ON public.payments;
+DROP POLICY IF EXISTS "payments_read_own" ON public.payments;
+DROP POLICY IF EXISTS "payments_insert_own" ON public.payments;
+DROP POLICY IF EXISTS "payments_admin_write" ON public.payments;
 CREATE POLICY "payments_read_own" ON public.payments FOR SELECT TO authenticated
   USING (auth.uid() = user_id OR public.has_role(auth.uid(),'admin'));
 CREATE POLICY "payments_insert_own" ON public.payments FOR INSERT TO authenticated

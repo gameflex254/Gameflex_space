@@ -48,6 +48,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { getStorageUrl } from "@/lib/storage-url";
+import { siteConfig } from "@/config/site";
 
 // Preset Avatars for Gamers
 const PRESET_AVATARS = [
@@ -566,8 +567,7 @@ export function SettingsManager({
       if (error) {
         toast({
           title: "Account Deletion Requested",
-          description:
-            "Your request has been logged. Please contact support@gameflex.app for instant removal.",
+          description: `Your request has been logged. Please contact ${siteConfig.supportEmail} for instant removal.`,
         });
       } else {
         toast({
@@ -580,7 +580,7 @@ export function SettingsManager({
     } catch (err: any) {
       toast({
         title: "Contact Support",
-        description: "Please email support@gameflex.app to complete your account deletion.",
+        description: `Please email ${siteConfig.supportEmail} to complete your account deletion.`,
       });
     } finally {
       setIsDeletingAccount(false);

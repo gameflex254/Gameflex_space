@@ -23,9 +23,9 @@ export const siteConfig = {
     env("VITE_APP_DESCRIPTION") ??
     "The world's premier gaming ecosystem. Discover the complete gaming experience on one platform.",
   /** Canonical public origin, used for share links and absolute URLs. */
-  url: env("VITE_SITE_URL") ?? "https://gameflex.app",
+  url: env("VITE_SITE_URL") ?? "https://gameflex.co.ke",
   currency: env("VITE_CURRENCY") ?? "KES",
-  supportEmail: env("VITE_SUPPORT_EMAIL") ?? "support@gameflex.app",
+  supportEmail: env("VITE_SUPPORT_EMAIL") ?? "support@gameflex.co.ke",
   /** Default players per tournament lobby before players overflow into the next lobby. */
   defaultLobbySize: Number(env("VITE_DEFAULT_LOBBY_SIZE") ?? 16),
 } as const;
