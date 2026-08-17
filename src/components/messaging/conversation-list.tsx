@@ -59,7 +59,7 @@ export function ConversationList({
 
       const { data: convData } = await backend
         .from("conversations")
-        .select("*")
+        .select("id, participant1_id, participant2_id, last_message_at")
         .or(`participant1_id.eq.${user.id},participant2_id.eq.${user.id}`)
         .order("last_message_at", { ascending: false });
 
@@ -77,11 +77,13 @@ export function ConversationList({
 
       const profileMap = new Map(profiles?.map((p) => [p.user_id, p]) ?? []);
 
+      // Fetch only the last few messages per conversation instead of ALL messages
       const { data: allMessages } = await backend
         .from("messages")
-        .select("*")
+        .select("id, conversation_id, sender_id, content, created_at, is_read, is_encrypted")
         .in("conversation_id", conversationIds)
-        .order("created_at", { ascending: false });
+        .order("created_at", { ascending: false })
+        .limit(50);
 
       const lastMsgMap = new Map<string, any>();
       if (allMessages) {

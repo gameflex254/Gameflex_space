@@ -1,9 +1,10 @@
 import { GAMEFLEX_BUCKETS, isGameflexBucket } from "../buckets.ts";
 import type { StorageProvider, StorageObjectMetadata } from "../types.ts";
 
-const DEFAULT_VPS_API = (typeof import.meta !== "undefined"
-  ? (import.meta.env as Record<string, string | undefined>)?.VITE_STORAGE_API_URL
-  : undefined) ??
+const DEFAULT_VPS_API =
+  (typeof import.meta !== "undefined"
+    ? (import.meta.env as Record<string, string | undefined>)?.VITE_STORAGE_API_URL
+    : undefined) ??
   (typeof process !== "undefined"
     ? (process.env as Record<string, string | undefined>)?.VITE_STORAGE_API_URL
     : undefined) ??
@@ -11,9 +12,10 @@ const DEFAULT_VPS_API = (typeof import.meta !== "undefined"
     ? (process.env as Record<string, string | undefined>)?.STORAGE_API_URL
     : undefined);
 
-const DEFAULT_VPS_PUBLIC = (typeof import.meta !== "undefined"
-  ? (import.meta.env as Record<string, string | undefined>)?.VITE_STORAGE_PUBLIC_URL
-  : undefined) ??
+const DEFAULT_VPS_PUBLIC =
+  (typeof import.meta !== "undefined"
+    ? (import.meta.env as Record<string, string | undefined>)?.VITE_STORAGE_PUBLIC_URL
+    : undefined) ??
   (typeof process !== "undefined"
     ? (process.env as Record<string, string | undefined>)?.VITE_STORAGE_PUBLIC_URL
     : undefined) ??
@@ -59,7 +61,18 @@ export class VPSStorageProvider implements StorageProvider {
     return bucket;
   }
 
-  async upload(bucket: string, objectKey: string, file: Blob | File, options?: { contentType?: string; cacheControl?: string; upsert?: boolean; ownerId?: string; metadata?: Record<string, unknown> }) {
+  async upload(
+    bucket: string,
+    objectKey: string,
+    file: Blob | File,
+    options?: {
+      contentType?: string;
+      cacheControl?: string;
+      upsert?: boolean;
+      ownerId?: string;
+      metadata?: Record<string, unknown>;
+    },
+  ) {
     const resolvedBucket = this.ensureBucket(bucket);
     const normalizedKey = normalizeObjectKey(objectKey);
     const form = new FormData();
@@ -81,7 +94,11 @@ export class VPSStorageProvider implements StorageProvider {
       throw new Error(message || `VPS upload failed (${res.status})`);
     }
 
-    const json = (await res.json()) as { objectKey?: string; url?: string; metadata?: StorageObjectMetadata };
+    const json = (await res.json()) as {
+      objectKey?: string;
+      url?: string;
+      metadata?: StorageObjectMetadata;
+    };
     const metadata: StorageObjectMetadata = json.metadata ?? {
       bucket: resolvedBucket,
       objectKey: normalizedKey,
@@ -104,7 +121,9 @@ export class VPSStorageProvider implements StorageProvider {
   async download(bucket: string, objectKey: string) {
     const resolvedBucket = this.ensureBucket(bucket);
     const normalizedKey = normalizeObjectKey(objectKey);
-    const response = await fetch(`${joinUrl(this.apiUrl, resolvedBucket, "download")}?objectKey=${encodeURIComponent(normalizedKey)}`);
+    const response = await fetch(
+      `${joinUrl(this.apiUrl, resolvedBucket, "download")}?objectKey=${encodeURIComponent(normalizedKey)}`,
+    );
     if (!response.ok) {
       throw new Error(`VPS download failed (${response.status})`);
     }
@@ -149,13 +168,17 @@ export class VPSStorageProvider implements StorageProvider {
   async exists(bucket: string, objectKey: string) {
     const resolvedBucket = this.ensureBucket(bucket);
     const normalizedKey = normalizeObjectKey(objectKey);
-    const response = await fetch(`${joinUrl(this.apiUrl, resolvedBucket, "metadata")}?objectKey=${encodeURIComponent(normalizedKey)}`);
+    const response = await fetch(
+      `${joinUrl(this.apiUrl, resolvedBucket, "metadata")}?objectKey=${encodeURIComponent(normalizedKey)}`,
+    );
     return response.ok;
   }
 
   async list(bucket: string, prefix?: string) {
     const resolvedBucket = this.ensureBucket(bucket);
-    const response = await fetch(`${joinUrl(this.apiUrl, resolvedBucket, "list")}${prefix ? `?prefix=${encodeURIComponent(prefix)}` : ""}`);
+    const response = await fetch(
+      `${joinUrl(this.apiUrl, resolvedBucket, "list")}${prefix ? `?prefix=${encodeURIComponent(prefix)}` : ""}`,
+    );
     if (!response.ok) {
       throw new Error(`VPS list failed (${response.status})`);
     }
@@ -166,20 +189,36 @@ export class VPSStorageProvider implements StorageProvider {
   async getMetadata(bucket: string, objectKey: string): Promise<StorageObjectMetadata> {
     const resolvedBucket = this.ensureBucket(bucket);
     const normalizedKey = normalizeObjectKey(objectKey);
-    const response = await fetch(`${joinUrl(this.apiUrl, resolvedBucket, "metadata")}?objectKey=${encodeURIComponent(normalizedKey)}`);
+    const response = await fetch(
+      `${joinUrl(this.apiUrl, resolvedBucket, "metadata")}?objectKey=${encodeURIComponent(normalizedKey)}`,
+    );
     if (!response.ok) throw new Error(`VPS metadata failed (${response.status})`);
     const json = (await response.json()) as StorageObjectMetadata;
-    return { ...json, bucket: json.bucket ?? resolvedBucket, objectKey: json.objectKey ?? normalizedKey, provider: json.provider ?? "vps" };
+    return {
+      ...json,
+      bucket: json.bucket ?? resolvedBucket,
+      objectKey: json.objectKey ?? normalizedKey,
+      provider: json.provider ?? "vps",
+    };
   }
 
   async health() {
     try {
       const response = await fetch(joinUrl(this.apiUrl, "health"));
-      if (!response.ok) return { ok: false, provider: "vps" as const, details: { status: response.status } };
-      const json = (await response.json()) as { ok?: boolean; provider?: string; details?: Record<string, unknown> };
+      if (!response.ok)
+        return { ok: false, provider: "vps" as const, details: { status: response.status } };
+      const json = (await response.json()) as {
+        ok?: boolean;
+        provider?: string;
+        details?: Record<string, unknown>;
+      };
       return { ok: !!json.ok, provider: "vps" as const, details: json.details ?? {} };
     } catch (error) {
-      return { ok: false, provider: "vps" as const, details: { message: error instanceof Error ? error.message : String(error) } };
+      return {
+        ok: false,
+        provider: "vps" as const,
+        details: { message: error instanceof Error ? error.message : String(error) },
+      };
     }
   }
 }

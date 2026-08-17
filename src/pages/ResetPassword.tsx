@@ -27,21 +27,30 @@ export default function ResetPassword() {
       if (!cancelled && session) setLinkState("valid");
     });
 
-    void backend.auth.getSession().then(({ data }) => {
+    let validationAttempts = 0;
+
+    const validateSession = async () => {
+      const { data } = await backend.auth.getSession();
       if (cancelled) return;
       if (data.session) {
         setLinkState("valid");
         return;
       }
+
+      validationAttempts += 1;
+      if (validationAttempts >= 2) {
+        setLinkState("invalid");
+        return;
+      }
+
       // Token parsing is async; give it a moment before declaring the link dead.
       setTimeout(() => {
         if (cancelled) return;
-        void backend.auth.getSession().then(({ data: retry }) => {
-          if (cancelled) return;
-          setLinkState(retry.session ? "valid" : "invalid");
-        });
+        void validateSession();
       }, 2000);
-    });
+    };
+
+    void validateSession();
 
     return () => {
       cancelled = true;

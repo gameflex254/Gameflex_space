@@ -3,7 +3,18 @@ import type { StorageProvider, StorageObjectMetadata } from "../types.ts";
 export class R2StorageProvider implements StorageProvider {
   readonly kind = "r2" as const;
 
-  async upload(bucket: string, objectKey: string, file: Blob | File, options?: { contentType?: string; cacheControl?: string; upsert?: boolean; ownerId?: string; metadata?: Record<string, unknown> }) {
+  async upload(
+    bucket: string,
+    objectKey: string,
+    file: Blob | File,
+    options?: {
+      contentType?: string;
+      cacheControl?: string;
+      upsert?: boolean;
+      ownerId?: string;
+      metadata?: Record<string, unknown>;
+    },
+  ) {
     const url = await this.getUrl(bucket, objectKey);
     const metadata: StorageObjectMetadata = {
       bucket,
@@ -27,9 +38,10 @@ export class R2StorageProvider implements StorageProvider {
   }
 
   async getUrl(bucket: string, objectKey: string): Promise<string> {
-    const publicUrl = (typeof import.meta !== "undefined"
-      ? (import.meta.env as Record<string, string | undefined>)?.VITE_STORAGE_PUBLIC_URL
-      : undefined) ??
+    const publicUrl =
+      (typeof import.meta !== "undefined"
+        ? (import.meta.env as Record<string, string | undefined>)?.VITE_STORAGE_PUBLIC_URL
+        : undefined) ??
       (typeof process !== "undefined"
         ? (process.env as Record<string, string | undefined>)?.VITE_STORAGE_PUBLIC_URL
         : undefined) ??
@@ -67,6 +79,12 @@ export class R2StorageProvider implements StorageProvider {
   }
 
   async health() {
-    return { ok: true, provider: "r2" as const, details: { note: "R2 provider interface is prepared; credentials are configured separately." } };
+    return {
+      ok: true,
+      provider: "r2" as const,
+      details: {
+        note: "R2 provider interface is prepared; credentials are configured separately.",
+      },
+    };
   }
 }

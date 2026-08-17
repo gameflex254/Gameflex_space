@@ -53,9 +53,15 @@ test("valid uploads pass the 10 MB limit and MIME rules", () => {
   assert.doesNotThrow(() => validateUploadLimits(max, "image/jpeg", "avatars"));
 
   const oversized = new Blob([new Uint8Array(MAX_UPLOAD_BYTES + 1)], { type: "image/jpeg" });
-  assert.throws(() => validateUploadLimits(oversized, "image/jpeg", "avatars"), /exceeds the 10 MB/);
+  assert.throws(
+    () => validateUploadLimits(oversized, "image/jpeg", "avatars"),
+    /exceeds the 10 MB/,
+  );
 
-  assert.throws(() => validateUploadLimits(new Blob(["text"], { type: "text/plain" }), "text/plain", "avatars"), /not allowed/);
+  assert.throws(
+    () => validateUploadLimits(new Blob(["text"], { type: "text/plain" }), "text/plain", "avatars"),
+    /not allowed/,
+  );
 });
 
 test("object keys are sanitized and path traversal is rejected", () => {
@@ -73,5 +79,8 @@ test("magic-byte validation catches mismatched media signatures", async () => {
   await assert.doesNotReject(() => validateMagicBytes(jpeg, "avatars", "image/jpeg"));
 
   const badPng = new Blob([Uint8Array.from([0xff, 0xd8, 0xff, 0xe0])], { type: "image/png" });
-  await assert.rejects(() => validateMagicBytes(badPng, "avatars", "image/png"), /does not match PNG/);
+  await assert.rejects(
+    () => validateMagicBytes(badPng, "avatars", "image/png"),
+    /does not match PNG/,
+  );
 });

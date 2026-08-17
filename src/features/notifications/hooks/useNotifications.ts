@@ -1,6 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useEffect } from "react";
 import { QUERY_KEYS } from "@/constants/query-keys";
 import { notificationService } from "@/services/notifications/NotificationService";
+import { realtimeService } from "@/services/realtime";
 
 export function useNotifications(userId: string) {
   const queryClient = useQueryClient();
@@ -15,8 +17,19 @@ export function useNotifications(userId: string) {
     queryKey: QUERY_KEYS.notifications.unreadCount(userId),
     queryFn: () => notificationService.getUnreadCount(userId),
     enabled: !!userId,
-    refetchInterval: 30 * 1000,
+    // Increased from 30s polling to 120s since realtime handles most updates
+    refetchInterval: 120 * 1000,
   });
+
+  // Subscribe to notification updates via realtime instead of polling frequently
+  useEffect(() => {
+    if (!userId) return;
+    const unsubscribe = realtimeService.subscribeToNotifications(userId, () => {
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.notifications.list(userId) });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.notifications.unreadCount(userId) });
+    });
+    return unsubscribe;
+  }, [userId, queryClient]);
 
   const markAsReadMutation = useMutation({
     mutationFn: (notificationId: string) => notificationService.markAsRead(notificationId),

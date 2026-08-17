@@ -11,7 +11,7 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "typecheck": "tsc --noEmit",
-    "test": "node --test --experimental-strip-types \"src/storage/**/*.test.ts\"",
+    "test": "node --experimental-specifier-resolution=node --test --experimental-strip-types \"src/storage/**/*.test.ts\"",
     "start": "node dist/server/index.mjs"
   },
   "dependencies": {
@@ -87,6 +87,7 @@
     "globals": "^15.15.0",
     "nitro": "3.0.260603-beta",
     "prettier": "^3.7.3",
+    "supabase": "^2.114.0",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.56.1",
     "vite": "^8.2.0"

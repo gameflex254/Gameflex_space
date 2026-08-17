@@ -60,20 +60,30 @@ function AuthCallback() {
       if (session) finish();
     });
 
-    void backend.auth.getSession().then(({ data }) => {
+    let checkAttempts = 0;
+
+    const checkSession = async () => {
+      const { data } = await backend.auth.getSession();
+      if (cancelled) return;
       if (data.session) {
         finish();
         return;
       }
+
+      checkAttempts += 1;
+      if (checkAttempts >= 2) {
+        setError("This sign-in link is invalid or has already been used.");
+        return;
+      }
+
       // No session and no provider error: the link was already used or expired.
       setTimeout(() => {
         if (cancelled) return;
-        void backend.auth.getSession().then(({ data: retry }) => {
-          if (retry.session) finish();
-          else if (!cancelled) setError("This sign-in link is invalid or has already been used.");
-        });
+        void checkSession();
       }, 2500);
-    });
+    };
+
+    void checkSession();
 
     return () => {
       cancelled = true;

@@ -1,6 +1,8 @@
+import { Suspense, lazy } from "react";
 import { pageSeo } from "@/lib/seo";
 import { createFileRoute } from "@tanstack/react-router";
-import Page from "@/pages/Marketplace";
+
+const Page = lazy(() => import("@/pages/Marketplace"));
 
 export const Route = createFileRoute("/marketplace")({
   head: () =>
@@ -9,5 +11,11 @@ export const Route = createFileRoute("/marketplace")({
       description:
         "Buy and sell accounts, skins, coaching and in-game items with escrow-protected payments.",
     }),
-  component: Page,
+  component: () => (
+    <Suspense
+      fallback={<div className="p-6 text-sm text-muted-foreground">Loading marketplace…</div>}
+    >
+      <Page />
+    </Suspense>
+  ),
 });

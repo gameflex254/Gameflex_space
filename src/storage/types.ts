@@ -47,5 +47,9 @@ export interface StorageProvider {
   exists(bucket: string, objectKey: string): Promise<boolean>;
   list(bucket: string, prefix?: string): Promise<string[]>;
   getMetadata(bucket: string, objectKey: string): Promise<StorageObjectMetadata>;
-  health(): Promise<{ ok: boolean; provider: StorageProviderKind; details?: Record<string, unknown> }>;
+  health(): Promise<{
+    ok: boolean;
+    provider: StorageProviderKind;
+    details?: Record<string, unknown>;
+  }>;
 }

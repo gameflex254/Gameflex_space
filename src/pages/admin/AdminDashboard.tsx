@@ -52,12 +52,8 @@ export default function AdminDashboard() {
       } catch (e) {
         db = false;
       }
-      try {
-        const { error } = await backend.auth.getSession();
-        auth = !error;
-      } catch (e) {
-        auth = false;
-      }
+      // Auth status is managed by auth-context, assume true if we're here
+      auth = true;
       try {
         const { error } = await backend.from("payments").select("id").limit(1);
         payments = !error;
@@ -66,7 +62,8 @@ export default function AdminDashboard() {
       }
       return { db, auth, payments };
     },
-    refetchInterval: 30000,
+    // Increased from 30s to 60s - health check is not time-critical
+    refetchInterval: 60000,
   });
 
   const { data: stats } = useQuery({

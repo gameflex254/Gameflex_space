@@ -1,6 +1,8 @@
+import { Suspense, lazy } from "react";
 import { pageSeo } from "@/lib/seo";
 import { createFileRoute } from "@tanstack/react-router";
-import Page from "@/pages/Messages";
+
+const Page = lazy(() => import("@/pages/Messages"));
 
 export const Route = createFileRoute("/messages")({
   head: () =>
@@ -9,5 +11,9 @@ export const Route = createFileRoute("/messages")({
       description: "Private and team chat with the players you compete alongside.",
       noindex: true,
     }),
-  component: Page,
+  component: () => (
+    <Suspense fallback={<div className="p-6 text-sm text-muted-foreground">Loading messages…</div>}>
+      <Page />
+    </Suspense>
+  ),
 });

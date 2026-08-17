@@ -1,6 +1,12 @@
 import { createStorageProvider, getStorageProvider } from "@/storage";
 import type { StorageProvider } from "@/storage";
-import { createStableObjectKey, MAX_UPLOAD_BYTES, sanitizeObjectKey, validateUploadLimits, validateMagicBytes } from "@/storage";
+import {
+  createStableObjectKey,
+  MAX_UPLOAD_BYTES,
+  sanitizeObjectKey,
+  validateUploadLimits,
+  validateMagicBytes,
+} from "@/storage";
 
 export interface IStorageProvider {
   upload(
@@ -23,7 +29,12 @@ export interface IStorageProvider {
 class CompatStorageProvider implements IStorageProvider {
   constructor(private readonly provider: StorageProvider) {}
 
-  async upload(bucket: string, path: string, file: File, options?: any): Promise<{ url: string; path: string; error?: string }> {
+  async upload(
+    bucket: string,
+    path: string,
+    file: File,
+    options?: any,
+  ): Promise<{ url: string; path: string; error?: string }> {
     try {
       const objectKey = sanitizeObjectKey(path);
       validateUploadLimits(file, file.type, bucket);
@@ -51,7 +62,13 @@ class CompatStorageProvider implements IStorageProvider {
     return `/storage/${bucket}/${sanitizeObjectKey(path)}`;
   }
 
-  async update(bucket: string, oldPath: string, newPath: string, file: File, options?: any): Promise<{ url: string; error?: string }> {
+  async update(
+    bucket: string,
+    oldPath: string,
+    newPath: string,
+    file: File,
+    options?: any,
+  ): Promise<{ url: string; error?: string }> {
     try {
       if (oldPath !== newPath) {
         const deleteResult = await this.delete(bucket, oldPath);
@@ -121,4 +138,11 @@ export class MediaService {
 }
 
 export const mediaService = new MediaService();
-export { MAX_UPLOAD_BYTES, createStableObjectKey, sanitizeObjectKey, validateUploadLimits, validateMagicBytes, getStorageProvider };
+export {
+  MAX_UPLOAD_BYTES,
+  createStableObjectKey,
+  sanitizeObjectKey,
+  validateUploadLimits,
+  validateMagicBytes,
+  getStorageProvider,
+};

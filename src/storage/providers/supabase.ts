@@ -4,7 +4,18 @@ import type { StorageProvider, StorageObjectMetadata } from "../types.ts";
 export class SupabaseStorageProvider implements StorageProvider {
   readonly kind = "supabase" as const;
 
-  async upload(bucket: string, objectKey: string, file: Blob | File, options?: { contentType?: string; cacheControl?: string; upsert?: boolean; ownerId?: string; metadata?: Record<string, unknown> }) {
+  async upload(
+    bucket: string,
+    objectKey: string,
+    file: Blob | File,
+    options?: {
+      contentType?: string;
+      cacheControl?: string;
+      upsert?: boolean;
+      ownerId?: string;
+      metadata?: Record<string, unknown>;
+    },
+  ) {
     const result = await backend.storage.from(bucket).upload(objectKey, file, {
       contentType: options?.contentType,
       cacheControl: options?.cacheControl,
@@ -48,7 +59,9 @@ export class SupabaseStorageProvider implements StorageProvider {
   }
 
   async getSignedUrl(bucket: string, objectKey: string, expiresIn = 3600) {
-    const { data, error } = await backend.storage.from(bucket).createSignedUrl(objectKey, expiresIn);
+    const { data, error } = await backend.storage
+      .from(bucket)
+      .createSignedUrl(objectKey, expiresIn);
     if (error || !data) throw error ?? new Error("Could not create signed URL");
     return data.signedUrl;
   }

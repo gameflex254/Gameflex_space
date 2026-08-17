@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import React, {
   createContext,
   useContext,
@@ -5,6 +6,7 @@ import React, {
   useEffect,
   useCallback,
   useMemo,
+  useRef,
   ReactNode,
 } from "react";
 import type { User, Session } from "@supabase/supabase-js";
@@ -173,6 +175,39 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsAdmin(!!data);
   }, []);
 
+  const hydratedUserIdRef = useRef<string | null>(null);
+
+  const syncSession = useCallback(
+    async (nextSession: Session | null) => {
+      const nextUser = nextSession?.user ?? null;
+      const nextUserId = nextUser?.id ?? null;
+      setSession(nextSession);
+      setUser(nextUser);
+
+      if (!nextUserId) {
+        hydratedUserIdRef.current = null;
+        setProfile(null);
+        setIsAdmin(false);
+        return;
+      }
+
+      if (hydratedUserIdRef.current === nextUserId) {
+        return;
+      }
+
+      hydratedUserIdRef.current = nextUserId;
+      await Promise.all([
+        fetchProfile(nextUserId, {
+          username: nextUser?.user_metadata?.username,
+          email: nextUser?.email,
+        }),
+        checkAdminRole(nextUserId, nextUser?.email),
+        applyPendingReferral(nextUserId),
+      ]);
+    },
+    [applyPendingReferral, checkAdminRole, fetchProfile],
+  );
+
   useEffect(() => {
     let isActive = true;
 
@@ -180,42 +215,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       data: { subscription },
     } = backend.auth.onAuthStateChange((_event, session) => {
       if (!isActive) return;
-      setSession(session);
-      setUser(session?.user ?? null);
-
-      if (session?.user) {
-        void Promise.all([
-          fetchProfile(session.user.id),
-          checkAdminRole(session.user.id, session.user.email),
-          applyPendingReferral(session.user.id),
-        ]);
-      } else {
-        setProfile(null);
-        setIsAdmin(false);
-      }
+      void syncSession(session);
     });
 
     void backend.auth.getSession().then(({ data: { session } }) => {
       if (!isActive) return;
-      setSession(session);
-      setUser(session?.user ?? null);
-
-      if (session?.user) {
-        void Promise.all([
-          fetchProfile(session.user.id),
-          checkAdminRole(session.user.id, session.user.email),
-          applyPendingReferral(session.user.id),
-        ]);
-      }
-
+      void syncSession(session);
       setIsLoading(false);
     });
 
     return () => {
       isActive = false;
+      hydratedUserIdRef.current = null;
       subscription.unsubscribe();
     };
-  }, [applyPendingReferral, checkAdminRole, fetchProfile]);
+  }, [syncSession]);
 
   const login = useCallback(async (email: string, password: string) => {
     const { error } = await backend.auth.signInWithPassword({

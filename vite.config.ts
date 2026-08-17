@@ -34,6 +34,42 @@ export default defineConfig(({ mode, command }) => {
     },
     server: { port, host },
     preview: { port, host },
+    build: {
+      sourcemap: false,
+      reportCompressedSize: true,
+      chunkSizeWarningLimit: 900,
+      rollupOptions: {
+        output: {
+          manualChunks(id) {
+            if (id.includes("node_modules/react") || id.includes("node_modules/react-dom")) {
+              return "react-vendor";
+            }
+            if (id.includes("@tanstack/react-router") || id.includes("@tanstack/react-query")) {
+              return "router-vendor";
+            }
+            if (
+              id.includes("@radix-ui") ||
+              id.includes("lucide-react") ||
+              id.includes("cmdk") ||
+              id.includes("vaul") ||
+              id.includes("sonner")
+            ) {
+              return "ui-vendor";
+            }
+            if (id.includes("@supabase/supabase-js") || id.includes("@supabase/server")) {
+              return "supabase-vendor";
+            }
+            if (id.includes("recharts")) {
+              return "chart-vendor";
+            }
+            if (id.includes("framer-motion")) {
+              return "motion-vendor";
+            }
+            return undefined;
+          },
+        },
+      },
+    },
     plugins: [
       tailwindcss(),
       tanstackStart({
