@@ -98,11 +98,11 @@ const Marketplace = () => {
   const uploadImage = async (file: File): Promise<string | null> => {
     const fileExt = file.name.split(".").pop();
     const fileName = `marketplace/${crypto.randomUUID()}.${fileExt}`;
-    const { error } = await backend.storage.from("tournament-images").upload(fileName, file);
+    const { error } = await backend.storage.from("marketplace").upload(fileName, file);
 
     if (error) throw error;
 
-    return await getStorageUrl("tournament-images", fileName);
+    return await getStorageUrl("marketplace", fileName);
   };
 
   const createListingMutation = useMutation({

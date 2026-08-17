@@ -60,13 +60,42 @@ const PRESET_AVATARS = [
   { id: "avatar_6", name: "Butterfly Crown", url: GAMER_AVATARS[5] },
 ];
 
+type PlatformValue = "playstation" | "xbox" | "pc" | "mobile";
+
 const GAMING_PLATFORMS = [
-  "PC (Windows)",
-  "PlayStation 5",
-  "Xbox Series X/S",
-  "Mobile (iOS/Android)",
-  "Nintendo Switch",
-];
+  { value: "pc", label: "PC (Windows)" },
+  { value: "playstation", label: "PlayStation 5" },
+  { value: "xbox", label: "Xbox Series X/S" },
+  { value: "mobile", label: "Mobile (iOS/Android)" },
+] as const;
+
+const normalizePlatformValue = (value: string | null | undefined): PlatformValue => {
+  const normalized = value?.trim().toLowerCase();
+
+  switch (normalized) {
+    case "pc":
+    case "pc (windows)":
+    case "windows":
+      return "pc";
+    case "playstation":
+    case "ps4":
+    case "ps5":
+    case "playstation 5":
+      return "playstation";
+    case "xbox":
+    case "xbox series x/s":
+    case "xbox series":
+      return "xbox";
+    case "mobile":
+    case "mobile (ios/android)":
+    case "ios":
+    case "android":
+      return "mobile";
+    default:
+      return "pc";
+  }
+};
+
 const GAME_GENRES = [
   "FPS / Shooter",
   "Battle Royale",
@@ -106,7 +135,7 @@ export function SettingsManager({
   const [bio, setBio] = useState("");
   const [website, setWebsite] = useState("");
   const [avatarUrl, setAvatarUrl] = useState("");
-  const [platform, setPlatform] = useState("PC (Windows)");
+  const [platform, setPlatform] = useState<PlatformValue>("pc");
   const [favoriteGenres, setFavoriteGenres] = useState<string[]>([]);
   const [savingProfile, setSavingProfile] = useState(false);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
@@ -239,7 +268,7 @@ export function SettingsManager({
       setWebsite((profile as any).website || "");
       setAvatarUrl(profile.avatar_url || "");
       setCustomRefCode(profile.referral_code || "");
-      if ((profile as any).platform) setPlatform((profile as any).platform);
+      if ((profile as any).platform) setPlatform(normalizePlatformValue((profile as any).platform));
       if ((profile as any).favorite_genres) setFavoriteGenres((profile as any).favorite_genres);
     }
   }, [profile]);
@@ -280,8 +309,7 @@ export function SettingsManager({
         bio: bio.trim(),
         website: website.trim(),
         avatar_url: avatarUrl,
-        platform:
-          platform as unknown as import("@/integrations/supabase/types").Database["public"]["Enums"]["platform_type"],
+        platform: platform,
         favorite_genres: favoriteGenres,
         updated_at: new Date().toISOString(),
       };
@@ -870,12 +898,12 @@ export function SettingsManager({
                           <Label>Primary Gaming Platform</Label>
                           <select
                             value={platform}
-                            onChange={(e) => setPlatform(e.target.value)}
+                            onChange={(e) => setPlatform(normalizePlatformValue(e.target.value))}
                             className="w-full h-10 px-3 rounded-md border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary"
                           >
                             {GAMING_PLATFORMS.map((pl) => (
-                              <option key={pl} value={pl}>
-                                {pl}
+                              <option key={pl.value} value={pl.value}>
+                                {pl.label}
                               </option>
                             ))}
                           </select>

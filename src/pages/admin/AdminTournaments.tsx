@@ -85,11 +85,11 @@ export default function AdminTournaments() {
   const uploadImage = async (file: File): Promise<string | null> => {
     const fileExt = file.name.split(".").pop();
     const fileName = `${crypto.randomUUID()}.${fileExt}`;
-    const { error } = await backend.storage.from("tournament-images").upload(fileName, file);
+    const { error } = await backend.storage.from("tournaments").upload(fileName, file);
 
     if (error) throw error;
 
-    return await getStorageUrl("tournament-images", fileName);
+    return await getStorageUrl("tournaments", fileName);
   };
 
   const createMutation = useMutation({

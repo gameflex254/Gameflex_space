@@ -106,13 +106,14 @@ export class PaymentService {
       const fileExt = file.name.split(".").pop();
       // storage policies require the first folder to be the user's id
       const filePath = `${user.id}/${paymentId}.${fileExt}`;
+      // Use canonical 'support' bucket for payment proof uploads
       const { error: uploadError } = await backend.storage
-        .from("screenshots")
+        .from("support")
         .upload(filePath, file, { upsert: true });
 
       if (uploadError) throw uploadError;
 
-      const signedUrl = await getStorageUrl("screenshots", filePath);
+      const signedUrl = await getStorageUrl("support", filePath);
 
       // Update payment record with screenshot URL
       await backend

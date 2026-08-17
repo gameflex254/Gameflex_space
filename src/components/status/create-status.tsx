@@ -61,13 +61,13 @@ export function CreateStatus() {
         }
         const path = `${user.id}/${Date.now()}.${ext}`;
         const { error: uploadError } = await backend.storage
-          .from("status-media")
+          .from("stories")
           .upload(path, uploadPayload, {
             upsert: false,
             contentType: isImage ? "image/webp" : mediaFile.type,
           });
         if (uploadError) throw uploadError;
-        media_url = await getStorageUrl("status-media", path);
+        media_url = await getStorageUrl("stories", path);
         media_type = isImage ? "image" : "video";
         setIsUploading(false);
       }

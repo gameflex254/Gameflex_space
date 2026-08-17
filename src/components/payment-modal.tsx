@@ -117,10 +117,10 @@ export function PaymentModal({ tournament, isOpen, onClose, onSuccess }: Payment
           const fileExt = screenshotFile.name.split(".").pop();
           const filePath = `${activeUser.id}/${tournament.id}/${Date.now()}.${fileExt}`;
           const { error: uploadError } = await backend.storage
-            .from("screenshots")
+            .from("support")
             .upload(filePath, screenshotFile);
           if (!uploadError) {
-            screenshotUrl = await getStorageUrl("screenshots", filePath);
+            screenshotUrl = await getStorageUrl("support", filePath);
           }
         } catch (e) {
           console.warn("Screenshot upload warning:", e);

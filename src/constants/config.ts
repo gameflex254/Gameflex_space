@@ -17,12 +17,23 @@ export const CACHE = {
   STALE_TIME_TOURNAMENTS: 2 * 60 * 1000,
 };
 
+/**
+ * Canonical storage bucket names aligned with src/storage/buckets.ts
+ * Legacy bucket names (tournament-images, flex, etc.) are aliased to canonical names
+ * in the storage layer for backward compatibility.
+ */
 export const SUPABASE_BUCKETS = {
   AVATARS: "avatars",
-  TOURNAMENT_IMAGES: "tournament-images",
-  MARKETPLACE: "marketplace",
+  POSTS: "posts",
   STORIES: "stories",
-  FLEX: "flex",
+  SHORT_VIDEOS: "short-videos",
+  TOURNAMENTS: "tournaments",
+  ACHIEVEMENTS: "achievements",
+  REWARDS: "rewards",
+  MARKETPLACE: "marketplace",
+  MESSAGES: "messages",
+  SUPPORT: "support",
+  BACKUPS: "backups",
 };
 
 export const REALTIME_CHANNELS = {

@@ -39,7 +39,20 @@ export const BACKUP_TABLES = [
   "analytics_events",
 ] as const;
 
-export const STORAGE_BUCKETS = ["avatars", "tournament-images", "status-media", "screenshots"];
+/** Canonical storage buckets for backup purposes */
+export const STORAGE_BUCKETS = [
+  "avatars",
+  "posts",
+  "stories",
+  "short-videos",
+  "tournaments",
+  "achievements",
+  "rewards",
+  "marketplace",
+  "messages",
+  "support",
+  "backups",
+];
 
 type Admin = SupabaseClient<any, any, any>;
 

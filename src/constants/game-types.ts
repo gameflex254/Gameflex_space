@@ -30,7 +30,7 @@ export const PAYMENT_STATUSES = ["pending", "verified", "rejected", "refunded"] 
 
 export const REGISTRATION_STATUSES = ["pending", "confirmed", "cancelled", "checked_in"] as const;
 
-export const PLATFORM_TYPES = ["ps4", "ps5", "xbox", "mobile", "pc"] as const;
+export const PLATFORM_TYPES = ["playstation", "xbox", "pc", "mobile"] as const;
 
 export const LISTING_CATEGORIES = [
   "skins",

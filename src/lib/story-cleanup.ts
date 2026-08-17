@@ -19,14 +19,21 @@ export async function cleanupExpiredStories() {
     if (expired && expired.length > 0) {
       const idsToDelete = expired.map((s) => s.id);
 
-      // Clean up files in status-media bucket if applicable
+      // Clean up files in stories bucket (canonical) or status-media (legacy)
       for (const item of expired) {
-        if (item.media_url && item.media_url.includes("status-media")) {
+        if (item.media_url) {
           try {
-            const urlParts = item.media_url.split("/status-media/");
-            if (urlParts[1]) {
-              const filePath = decodeURIComponent(urlParts[1].split("?")[0]);
-              await backend.storage.from("status-media").remove([filePath]);
+            let filePath: string | undefined;
+            const storiesParts = item.media_url.split("/stories/");
+            const legacyParts = item.media_url.split("/status-media/");
+
+            if (storiesParts[1]) {
+              filePath = decodeURIComponent(storiesParts[1].split("?")[0]);
+              await backend.storage.from("stories").remove([filePath]);
+            } else if (legacyParts[1]) {
+              // Fallback for legacy media
+              filePath = decodeURIComponent(legacyParts[1].split("?")[0]);
+              await backend.storage.from("stories").remove([filePath]);
             }
           } catch {
             // storage deletion error ignore

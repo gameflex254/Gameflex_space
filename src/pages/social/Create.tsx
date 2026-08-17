@@ -113,12 +113,12 @@ export default function Create() {
         }
         const path = `${user.id}/post-${Date.now()}.${ext}`;
         const { error: uploadError } = await backend.storage
-          .from("status-media")
+          .from("posts")
           .upload(path, uploadPayload, {
             contentType: fileType === "image" ? "image/webp" : file.type,
           });
         if (uploadError) throw uploadError;
-        mediaUrl = await getStorageUrl("status-media", path);
+        mediaUrl = await getStorageUrl("posts", path);
       }
       const { error } = await backend.from("user_statuses").insert({
         user_id: user.id,
