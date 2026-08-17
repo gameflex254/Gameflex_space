@@ -142,3 +142,127 @@ If Cloudflare proxying is enabled, the storage origin should still terminate HTT
 - Enforce upload size and MIME constraints.
 - Reject path traversal and unsafe object keys.
 - Keep all secrets in the server environment and never in source control.
+## 6. PM2 Process Management
+
+The main GameFlex Nitro/Node production server is managed by PM2. PM2 keeps the application running, automatically restarts the process if it crashes, and provides production process monitoring and logs.
+
+The production server entrypoint is:
+
+```bash
+node dist/server/index.mjs
+```
+
+The repository contains `ecosystem.config.cjs` with the GameFlex PM2 configuration.
+
+### Start GameFlex
+
+After building the application:
+
+```bash
+npm run build
+npx pm2 start ecosystem.config.cjs
+```
+
+### Check status
+
+```bash
+npx pm2 status
+```
+
+The GameFlex process should show:
+
+```text
+gameflex    online
+```
+
+### View logs
+
+```bash
+npx pm2 logs gameflex
+```
+
+### Restart GameFlex
+
+```bash
+npx pm2 restart gameflex
+```
+
+### Stop GameFlex
+
+```bash
+npx pm2 stop gameflex
+```
+
+### Save the process list
+
+After starting or changing the production process configuration:
+
+```bash
+npx pm2 save
+```
+
+### Automatic crash recovery
+
+PM2 is configured with automatic restart enabled. If the GameFlex Node/Nitro process crashes, PM2 automatically restarts it.
+
+```text
+GameFlex process crashes
+        ↓
+PM2 detects failure
+        ↓
+PM2 automatically restarts GameFlex
+        ↓
+GameFlex returns online
+```
+
+### Automatic startup after VPS reboot
+
+On the production Contabo VPS, PM2 must be registered with systemd so it starts automatically when Ubuntu boots.
+
+Run on the production VPS:
+
+```bash
+npx pm2 startup
+```
+
+PM2 will output a `sudo ...` command. Execute the generated command, then run:
+
+```bash
+npx pm2 save
+```
+
+This ensures the saved GameFlex process is restored automatically after a VPS reboot.
+
+```text
+VPS reboot
+    ↓
+Ubuntu boots
+    ↓
+systemd starts PM2
+    ↓
+PM2 restores saved processes
+    ↓
+GameFlex Nitro starts
+    ↓
+GameFlex available on port 3000
+```
+
+### Production process architecture
+
+```text
+Internet
+    ↓
+Cloudflare
+    ↓
+Nginx / HTTPS
+    ↓
+GameFlex Nitro :3000
+    ↓
+PM2
+    ↓
+Node.js
+```
+
+PM2 manages the main GameFlex application. The separate `gameflex-storage` service remains managed by systemd.
+
+Do not run `pm2 startup` during normal development or inside temporary GitHub Codespaces environments. Configure it on the permanent production VPS.
