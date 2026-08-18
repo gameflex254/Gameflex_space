@@ -109,3 +109,71 @@ src/
   services/      domain services (tournaments, payments, social, …)
 supabase/migrations/  SQL schema
 ```
+GameFlex Production Deployment
+Initial Setup
+
+Install dependencies:
+
+npm install
+
+Build the production application:
+
+npm run build
+
+Start GameFlex with PM2:
+
+npx pm2 start ecosystem.config.cjs
+
+Save the PM2 process:
+
+npx pm2 save
+
+Check the application status:
+
+npx pm2 status
+
+View application logs:
+
+npx pm2 logs gameflex
+
+Updating the Website
+
+After making changes to the source code, rebuild and restart the application:
+
+npm run build && npx pm2 restart gameflex
+
+Important: PM2 runs the production build from the dist/ directory. Changes made in src/ will not appear in production until the application is rebuilt.
+
+PM2 Commands
+
+Check status
+
+npx pm2 status
+
+Restart GameFlex
+
+npx pm2 restart gameflex
+
+Stop GameFlex
+
+npx pm2 stop gameflex
+
+Start GameFlex
+
+npx pm2 start ecosystem.config.cjs
+
+Delete GameFlex
+
+npx pm2 delete gameflex
+
+View logs
+
+npx pm2 logs gameflex
+
+View recent logs
+
+npx pm2 logs gameflex --lines 100
+
+Save PM2 processes
+
+npx pm2 save
