@@ -182,3 +182,5 @@ npx pm2 logs gameflex --lines 100
 Save PM2 processes
 
 npx pm2 save
+
+rm -rf node_modules package-lock.json && npm cache clean --force && npm install
