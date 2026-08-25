@@ -4,7 +4,7 @@
    - Network-first for navigations
    - Never caches API, auth or realtime traffic
 */
-const VERSION = "v4";
+const VERSION = "v5";
 const CACHE_NAME = `gameflex-static-${VERSION}`;
 const MEDIA_CACHE = `gameflex-media-${VERSION}`;
 const RUNTIME_CACHE = `gameflex-runtime-${VERSION}`;
@@ -88,11 +88,11 @@ async function cacheFirst(request, cacheName) {
     .then((response) => {
       // Only cache complete, successful responses. Opaque/partial ones poison the cache.
       if (response.ok && response.type !== "opaque" && response.status !== 206) {
-        cache.put(request, response.clone());
+        cache.put(request, response.clone()).catch(() => undefined);
       }
       return response;
     })
-    .catch(() => cached);
+    .catch(() => cached ?? new Response("Offline", { status: 503, statusText: "Offline" }));
 
   // Serve cache instantly, refresh in the background.
   return cached || network;
@@ -119,7 +119,7 @@ self.addEventListener("fetch", (event) => {
         const cached = await cache.match(request);
         if (cached) return cached;
         const response = await fetch(request);
-        if (response.ok) cache.put(request, response.clone());
+        if (response.ok) cache.put(request, response.clone()).catch(() => undefined);
         return response;
       }),
     );
@@ -137,11 +137,14 @@ self.addEventListener("fetch", (event) => {
         .then((response) => {
           if (response.ok) {
             const copy = response.clone();
-            caches.open(RUNTIME_CACHE).then((cache) => cache.put(request, copy));
+            caches.open(RUNTIME_CACHE).then((cache) => cache.put(request, copy)).catch(() => undefined);
           }
           return response;
         })
-        .catch(async () => (await caches.match(request)) || caches.match("/")),
+        .catch(async () => {
+          const fallback = (await caches.match(request)) ?? (await caches.match("/"));
+          return fallback ?? new Response("Offline", { status: 503, statusText: "Offline" });
+        }),
     );
     return;
   }

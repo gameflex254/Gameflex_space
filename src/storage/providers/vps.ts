@@ -1,28 +1,34 @@
 import { GAMEFLEX_BUCKETS, isGameflexBucket } from "../buckets.ts";
 import type { StorageProvider, StorageObjectMetadata } from "../types.ts";
 
-const DEFAULT_VPS_API =
-  (typeof import.meta !== "undefined"
-    ? (import.meta.env as Record<string, string | undefined>)?.VITE_STORAGE_API_URL
-    : undefined) ??
-  (typeof process !== "undefined"
-    ? (process.env as Record<string, string | undefined>)?.VITE_STORAGE_API_URL
-    : undefined) ??
-  (typeof process !== "undefined"
-    ? (process.env as Record<string, string | undefined>)?.STORAGE_API_URL
-    : undefined);
+function readVpsApi() {
+  return (
+    (typeof import.meta !== "undefined"
+      ? (import.meta.env as Record<string, string | undefined>)?.VITE_STORAGE_API_URL
+      : undefined) ??
+    (typeof process !== "undefined"
+      ? (process.env as Record<string, string | undefined>)?.VITE_STORAGE_API_URL
+      : undefined) ??
+    (typeof process !== "undefined"
+      ? (process.env as Record<string, string | undefined>)?.STORAGE_API_URL
+      : undefined)
+  );
+}
 
-const DEFAULT_VPS_PUBLIC =
-  (typeof import.meta !== "undefined"
-    ? (import.meta.env as Record<string, string | undefined>)?.VITE_STORAGE_PUBLIC_URL
-    : undefined) ??
-  (typeof process !== "undefined"
-    ? (process.env as Record<string, string | undefined>)?.VITE_STORAGE_PUBLIC_URL
-    : undefined) ??
-  (typeof process !== "undefined"
-    ? (process.env as Record<string, string | undefined>)?.STORAGE_PUBLIC_URL
-    : undefined) ??
-  DEFAULT_VPS_API;
+function readVpsPublic(apiUrl?: string) {
+  return (
+    (typeof import.meta !== "undefined"
+      ? (import.meta.env as Record<string, string | undefined>)?.VITE_STORAGE_PUBLIC_URL
+      : undefined) ??
+    (typeof process !== "undefined"
+      ? (process.env as Record<string, string | undefined>)?.VITE_STORAGE_PUBLIC_URL
+      : undefined) ??
+    (typeof process !== "undefined"
+      ? (process.env as Record<string, string | undefined>)?.STORAGE_PUBLIC_URL
+      : undefined) ??
+    apiUrl
+  );
+}
 
 function normalizeObjectKey(input: string): string {
   const trimmed = input.trim();
@@ -47,11 +53,12 @@ export class VPSStorageProvider implements StorageProvider {
   private readonly publicUrl: string;
 
   constructor() {
-    if (!DEFAULT_VPS_API) {
+    const apiUrl = readVpsApi();
+    if (!apiUrl) {
       throw new Error("VITE_STORAGE_API_URL is required when VITE_STORAGE_PROVIDER=vps");
     }
-    this.apiUrl = DEFAULT_VPS_API;
-    this.publicUrl = DEFAULT_VPS_PUBLIC ?? DEFAULT_VPS_API;
+    this.apiUrl = apiUrl;
+    this.publicUrl = readVpsPublic(apiUrl) ?? apiUrl;
   }
 
   private ensureBucket(bucket: string) {

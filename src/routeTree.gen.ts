@@ -86,6 +86,7 @@ import { Route as TeamsIndexRouteImport } from './routes/teams.index'
 import { Route as TeamsIdRouteImport } from './routes/teams.$id'
 import { Route as TournamentsIndexRouteImport } from './routes/tournaments.index'
 import { Route as TournamentsIdRouteImport } from './routes/tournaments.$id'
+import { Route as ApiStorageBucketOperationRouteImport } from './routes/api.storage.$bucket.$operation'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -472,6 +473,12 @@ const TournamentsIdRoute = TournamentsIdRouteImport.update({
   path: '/tournaments/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiStorageBucketOperationRoute =
+  ApiStorageBucketOperationRouteImport.update({
+    id: '/storage/$bucket/$operation',
+    path: '/storage/$bucket/$operation',
+    getParentRoute: () => ApiRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -480,7 +487,7 @@ export interface FileRoutesByFullPath {
   '/achievements': typeof AchievementsRoute
   '/activity': typeof ActivityRoute
   '/admin': typeof AdminRouteWithChildren
-  '/api': typeof ApiRoute
+  '/api': typeof ApiRouteWithChildren
   '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
   '/create': typeof CreateRoute
@@ -551,6 +558,7 @@ export interface FileRoutesByFullPath {
   '/stories/': typeof StoriesIndexRoute
   '/teams/': typeof TeamsIndexRoute
   '/tournaments/': typeof TournamentsIndexRoute
+  '/api/storage/$bucket/$operation': typeof ApiStorageBucketOperationRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -558,7 +566,7 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/achievements': typeof AchievementsRoute
   '/activity': typeof ActivityRoute
-  '/api': typeof ApiRoute
+  '/api': typeof ApiRouteWithChildren
   '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
   '/create': typeof CreateRoute
@@ -627,6 +635,7 @@ export interface FileRoutesByTo {
   '/stories': typeof StoriesIndexRoute
   '/teams': typeof TeamsIndexRoute
   '/tournaments': typeof TournamentsIndexRoute
+  '/api/storage/$bucket/$operation': typeof ApiStorageBucketOperationRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -636,7 +645,7 @@ export interface FileRoutesById {
   '/achievements': typeof AchievementsRoute
   '/activity': typeof ActivityRoute
   '/admin': typeof AdminRouteWithChildren
-  '/api': typeof ApiRoute
+  '/api': typeof ApiRouteWithChildren
   '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
   '/create': typeof CreateRoute
@@ -707,6 +716,7 @@ export interface FileRoutesById {
   '/stories/': typeof StoriesIndexRoute
   '/teams/': typeof TeamsIndexRoute
   '/tournaments/': typeof TournamentsIndexRoute
+  '/api/storage/$bucket/$operation': typeof ApiStorageBucketOperationRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -788,6 +798,7 @@ export interface FileRouteTypes {
     | '/stories/'
     | '/teams/'
     | '/tournaments/'
+    | '/api/storage/$bucket/$operation'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -864,6 +875,7 @@ export interface FileRouteTypes {
     | '/stories'
     | '/teams'
     | '/tournaments'
+    | '/api/storage/$bucket/$operation'
   id:
     | '__root__'
     | '/'
@@ -943,6 +955,7 @@ export interface FileRouteTypes {
     | '/stories/'
     | '/teams/'
     | '/tournaments/'
+    | '/api/storage/$bucket/$operation'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -952,7 +965,7 @@ export interface RootRouteChildren {
   AchievementsRoute: typeof AchievementsRoute
   ActivityRoute: typeof ActivityRoute
   AdminRoute: typeof AdminRouteWithChildren
-  ApiRoute: typeof ApiRoute
+  ApiRoute: typeof ApiRouteWithChildren
   AuthRoute: typeof AuthRoute
   ContactRoute: typeof ContactRoute
   CreateRoute: typeof CreateRoute
@@ -1545,6 +1558,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TournamentsIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/storage/$bucket/$operation': {
+      id: '/api/storage/$bucket/$operation'
+      path: '/storage/$bucket/$operation'
+      fullPath: '/api/storage/$bucket/$operation'
+      preLoaderRoute: typeof ApiStorageBucketOperationRouteImport
+      parentRoute: typeof ApiRoute
+    }
   }
 }
 
@@ -1588,6 +1608,16 @@ const AdminRouteChildren: AdminRouteChildren = {
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
+interface ApiRouteChildren {
+  ApiStorageBucketOperationRoute: typeof ApiStorageBucketOperationRoute
+}
+
+const ApiRouteChildren: ApiRouteChildren = {
+  ApiStorageBucketOperationRoute: ApiStorageBucketOperationRoute,
+}
+
+const ApiRouteWithChildren = ApiRoute._addFileChildren(ApiRouteChildren)
+
 interface SocialRouteChildren {
   SocialProfileRoute: typeof SocialProfileRoute
   SocialSettingsRoute: typeof SocialSettingsRoute
@@ -1622,7 +1652,7 @@ const rootRouteChildren: RootRouteChildren = {
   AchievementsRoute: AchievementsRoute,
   ActivityRoute: ActivityRoute,
   AdminRoute: AdminRouteWithChildren,
-  ApiRoute: ApiRoute,
+  ApiRoute: ApiRouteWithChildren,
   AuthRoute: AuthRoute,
   ContactRoute: ContactRoute,
   CreateRoute: CreateRoute,

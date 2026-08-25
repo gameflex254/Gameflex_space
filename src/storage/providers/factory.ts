@@ -16,10 +16,10 @@ export function resolveStorageProviderName(): StorageProviderKind {
     (typeof process !== "undefined"
       ? (process.env as Record<string, string | undefined>)?.STORAGE_PROVIDER
       : undefined) ??
-    "supabase";
+    "r2";
 
-  if (raw === "vps" || raw === "r2" || raw === "s3") return raw;
-  return "supabase";
+  if (raw === "supabase" || raw === "vps" || raw === "r2" || raw === "s3") return raw;
+  throw new Error(`Unsupported storage provider: ${raw}`);
 }
 
 export async function getStorageProvider(): Promise<StorageProvider> {
@@ -29,10 +29,10 @@ export async function getStorageProvider(): Promise<StorageProvider> {
 export function createStorageProvider(): StorageProvider {
   const providerName = resolveStorageProviderName();
 
+  if (providerName === "supabase") return new SupabaseStorageProvider();
   if (providerName === "vps") return new VPSStorageProvider();
-  if (providerName === "r2") return new R2StorageProvider();
   if (providerName === "s3") return new S3StorageProvider();
-  return new SupabaseStorageProvider();
+  return new R2StorageProvider();
 }
 
 export const DEFAULT_MEDIA_BUCKETS = Object.values(GAMEFLEX_BUCKETS);

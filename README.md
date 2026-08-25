@@ -48,7 +48,7 @@ time (details in [`docs/backend-providers.md`](docs/backend-providers.md)):
 | ------------------------ | ----------------------------- | ---------- |
 | `VITE_BACKEND_PROVIDER`  | `supabase`, `rest`            | `supabase` |
 | `VITE_AUTH_PROVIDER`     | `supabase`, `custom`          | `supabase` |
-| `VITE_STORAGE_PROVIDER`  | `supabase`, `s3`, `r2`, `vps` | `supabase` |
+| `VITE_STORAGE_PROVIDER`  | `supabase`, `s3`, `r2`, `vps` | `r2`      |
 | `VITE_REALTIME_PROVIDER` | `supabase`, `none`            | `supabase` |
 
 Supply the matching credentials (`VITE_SUPABASE_URL`,
@@ -122,11 +122,16 @@ npm run build
 
 Start GameFlex with PM2:
 
-npx pm2 start ecosystem.config.cjs
+npm run pm2:start
 
 Save the PM2 process:
 
-npx pm2 save
+npm run pm2:save
+
+The PM2 ecosystem file loads `.env` through `env_file`; keep production secrets
+out of source control. Run `pm2 startup` once on the deployment host, execute
+the generated command with the host's system privileges, then use
+`npm run pm2:save` so PM2 restores GameFlex after a reboot.
 
 Check the application status:
 

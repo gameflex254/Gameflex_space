@@ -3,9 +3,8 @@
  *
  * Every backend capability (data, auth, storage, realtime, functions) is
  * selected independently through environment variables so the app can be
- * moved off the default managed backend one capability at a time — e.g. keep
- * data on Postgres/PostgREST while serving files from Cloudflare R2, S3 or a
- * self-hosted VPS gateway.
+ * moved off the default managed backend one capability at a time while serving
+ * files through the Cloudflare R2 gateway.
  *
  * All values are read at module load from Vite's build-time env (browser safe)
  * with a `process.env` fallback for SSR.
@@ -37,7 +36,7 @@ function pick<T extends string>(name: string, allowed: readonly T[], fallback: T
 export const backendConfig = {
   data: pick<DataProvider>("BACKEND_PROVIDER", ["supabase", "rest"], "supabase"),
   auth: pick<AuthProvider>("AUTH_PROVIDER", ["supabase", "custom"], "supabase"),
-  storage: pick<StorageProvider>("STORAGE_PROVIDER", ["supabase", "s3", "r2", "vps"], "supabase"),
+  storage: pick<StorageProvider>("STORAGE_PROVIDER", ["supabase", "s3", "r2", "vps"], "r2"),
   realtime: pick<RealtimeProvider>("REALTIME_PROVIDER", ["supabase", "none"], "supabase"),
 
   /** Base URL of a PostgREST-compatible data API (used by the `rest` provider). */

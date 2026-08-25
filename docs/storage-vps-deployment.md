@@ -1,6 +1,8 @@
-# GameFlex VPS storage deployment
+# GameFlex storage gateway deployment
 
-This document explains how to deploy the GameFlex storage API on a clean Contabo VPS and keep it provider-agnostic.
+This document explains the HTTP storage gateway contract used by GameFlex. The application is R2-only; the gateway owns the Cloudflare R2 credentials and must never expose them to browser code.
+
+The gateway may run on a VPS or another server platform, but it must write to Cloudflare R2 rather than Supabase Storage.
 
 ## 1. Prerequisites
 
@@ -63,10 +65,16 @@ STORAGE_PUBLIC_URL=https://storage.gameflex.co.ke
 STORAGE_ROOT=/var/lib/gameflex-storage
 STORAGE_MAX_UPLOAD_BYTES=10485760
 STORAGE_JWT_AUDIENCE=gameflex-storage
-SUPABASE_URL=https://feyfligmnghsmpsazpdc.supabase.co
-SUPABASE_PUBLISHABLE_KEY=<publishable-key>
-SUPABASE_SERVICE_ROLE_KEY=<service-role-key>
+STORAGE_PROVIDER=r2
+R2_ENDPOINT=https://<account-id>.r2.cloudflarestorage.com
+R2_ACCESS_KEY_ID=<access-key>
+R2_SECRET_ACCESS_KEY=<secret-key>
+R2_REGION=auto
 ```
+
+The web application must set `VITE_STORAGE_PROVIDER=r2`, `VITE_STORAGE_API_URL` to this gateway, and `VITE_STORAGE_PUBLIC_URL` to the R2 custom domain or CDN URL. `VITE_STORAGE_API_URL` is required at runtime; there is no Supabase Storage fallback.
+
+The gateway must implement the upload, remove, sign, list, and object endpoints documented in `src/backend/adapters/storage.ts`, with authentication and bucket/path authorization enforced server-side.
 
 ## 5. systemd
 

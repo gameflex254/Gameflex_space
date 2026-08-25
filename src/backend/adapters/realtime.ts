@@ -1,5 +1,5 @@
-import { backendConfig } from "../config";
-import type { RealtimeChannelLike } from "../types";
+import { backendConfig } from "../config.ts";
+import type { RealtimeChannelLike } from "../types.ts";
 
 /**
  * Realtime adapter. `REALTIME_PROVIDER=none` disables live subscriptions

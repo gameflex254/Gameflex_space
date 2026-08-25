@@ -1,5 +1,5 @@
-import { backendConfig } from "../config";
-import type { StorageApi, StorageFileApi } from "../types";
+import { backendConfig } from "../config.ts";
+import type { StorageApi, StorageFileApi } from "../types.ts";
 
 /**
  * Object-storage adapter for S3, Cloudflare R2 or a self-hosted VPS gateway.
@@ -24,6 +24,24 @@ function joinUrl(...parts: string[]): string {
 
 function toError(value: unknown): Error {
   return value instanceof Error ? value : new Error(String(value));
+}
+
+function createUnavailableStorage(message: string): StorageApi {
+  const unavailable = () => Promise.reject(new Error(message));
+  return {
+    from() {
+      return {
+        upload: unavailable,
+        remove: unavailable,
+        list: unavailable,
+        download: unavailable,
+        createSignedUrl: unavailable,
+        getPublicUrl(path) {
+          return { data: { publicUrl: path } };
+        },
+      };
+    },
+  };
 }
 
 function createHttpStorage(apiUrl: string, publicUrl?: string): StorageApi {
@@ -114,6 +132,13 @@ function createHttpStorage(apiUrl: string, publicUrl?: string): StorageApi {
         },
 
         getPublicUrl(path) {
+          if (!publicUrl && apiUrl === "/api/storage") {
+            return {
+              data: {
+                publicUrl: `${joinUrl(apiUrl, bucket, "object")}?path=${encodeURIComponent(path)}`,
+              },
+            };
+          }
           const origin = publicUrl ?? apiUrl;
           return { data: { publicUrl: joinUrl(origin, bucket, path) } };
         },
@@ -122,16 +147,16 @@ function createHttpStorage(apiUrl: string, publicUrl?: string): StorageApi {
   };
 }
 
-/** Returns an override storage API, or `undefined` to use the default backend. */
+/** Returns the configured external storage API. Supabase is never a fallback. */
 export function getStorageOverride(): StorageApi | undefined {
-  if (backendConfig.storage === "supabase") return undefined;
-
   const apiUrl = backendConfig.storageApiUrl;
+  if (!apiUrl && backendConfig.storage === "r2") {
+    return createHttpStorage("/api/storage");
+  }
   if (!apiUrl) {
-    console.warn(
-      `[backend] STORAGE_PROVIDER=${backendConfig.storage} requires VITE_STORAGE_API_URL. Falling back to the default storage provider.`,
+    return createUnavailableStorage(
+      `Storage provider ${backendConfig.storage} is not configured. Set VITE_STORAGE_API_URL for uploads and private file access.`,
     );
-    return undefined;
   }
   return createHttpStorage(apiUrl, backendConfig.storagePublicUrl);
 }

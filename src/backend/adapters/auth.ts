@@ -1,4 +1,4 @@
-import { backendConfig } from "../config";
+import { backendConfig } from "../config.ts";
 
 /**
  * Auth adapter. The default provider is the managed backend auth service.

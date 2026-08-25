@@ -2,7 +2,7 @@ import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
 import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
-import { backendConfig } from "../config";
+import { backendConfig } from "../config.ts";
 
 /**
  * Data adapter. The default provider is the managed backend client; the `rest`

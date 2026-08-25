@@ -13,14 +13,17 @@ import {
 
 test("factory resolves the configured provider", () => {
   const previous = process.env.VITE_STORAGE_PROVIDER;
+  const previousApi = process.env.STORAGE_API_URL;
   try {
+    process.env.VITE_STORAGE_PROVIDER = "r2";
+    process.env.VITE_STORAGE_API_URL = "https://storage.example.test";
+    process.env.STORAGE_API_URL = "https://storage.example.test";
+    assert.equal(resolveStorageProviderName(), "r2");
+    assert.equal(createStorageProvider().kind, "r2");
+
     process.env.VITE_STORAGE_PROVIDER = "vps";
     assert.equal(resolveStorageProviderName(), "vps");
     assert.equal(createStorageProvider().kind, "vps");
-
-    process.env.VITE_STORAGE_PROVIDER = "r2";
-    assert.equal(resolveStorageProviderName(), "r2");
-    assert.equal(createStorageProvider().kind, "r2");
 
     process.env.VITE_STORAGE_PROVIDER = "s3";
     assert.equal(resolveStorageProviderName(), "s3");
@@ -29,9 +32,15 @@ test("factory resolves the configured provider", () => {
     process.env.VITE_STORAGE_PROVIDER = "supabase";
     assert.equal(resolveStorageProviderName(), "supabase");
     assert.equal(createStorageProvider().kind, "supabase");
+
+    delete process.env.VITE_STORAGE_PROVIDER;
+    assert.equal(resolveStorageProviderName(), "r2");
   } finally {
     if (previous === undefined) delete process.env.VITE_STORAGE_PROVIDER;
     else process.env.VITE_STORAGE_PROVIDER = previous;
+    delete process.env.VITE_STORAGE_API_URL;
+    if (previousApi === undefined) delete process.env.STORAGE_API_URL;
+    else process.env.STORAGE_API_URL = previousApi;
   }
 });
 

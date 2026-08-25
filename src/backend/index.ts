@@ -1,14 +1,14 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 import type { Database } from "@/integrations/supabase/types";
-import { backendConfig, isDefaultBackend } from "./config";
-import { getAuthOverride } from "./adapters/auth";
-import { getDataClient } from "./adapters/data";
-import { getRealtimeOverride } from "./adapters/realtime";
-import { getStorageOverride } from "./adapters/storage";
+import { backendConfig, isDefaultBackend } from "./config.ts";
+import { getAuthOverride } from "./adapters/auth.ts";
+import { getDataClient } from "./adapters/data.ts";
+import { getRealtimeOverride } from "./adapters/realtime.ts";
+import { getStorageOverride } from "./adapters/storage.ts";
 
-export { backendConfig, isDefaultBackend } from "./config";
-export type { BackendConfig } from "./config";
+export { backendConfig, isDefaultBackend } from "./config.ts";
+export type { BackendConfig } from "./config.ts";
 
 /**
  * The single backend entry point for all client code.
