@@ -1,16 +1,17 @@
+cat > nixpacks.toml <<'EOF'
 providers = ["node"]
 
 [variables]
 NODE_ENV = "production"
 NITRO_PRESET = "node_server"
-NPM_CONFIG_INCLUDE = "optional"
+NPM_CONFIG_INCLUDE = "dev,optional"
 
 [phases.setup]
-nixPkgs = ["nodejs_22"]
+nixPkgs = ["nodejs_24"]
 
 [phases.install]
 cmds = [
-  "npm ci --legacy-peer-deps --include=optional --no-audit --no-fund"
+  "npm ci --legacy-peer-deps --include=dev --include=optional --no-audit --no-fund"
 ]
 
 [phases.build]
@@ -18,3 +19,4 @@ cmds = ["npm run build"]
 
 [start]
 cmd = "npm start"
+EOF
