@@ -1,21 +1,24 @@
-# ---------------------------------------------------------------------------
-# Production image for the Node server build (dist/).
-# Build with:  docker build --build-arg NITRO_PRESET=node_server -t gameflex .
-# Run with:    docker run -p 8080:8080 --env-file .env gameflex
-# ---------------------------------------------------------------------------
 FROM node:22-alpine AS build
 WORKDIR /app
 
 ENV NITRO_PRESET=node_server
 
-COPY package.json bun.lock ./
-RUN npm install --no-audit --no-fund
+COPY package.json package-lock.json ./
+RUN npm ci --legacy-peer-deps --no-audit --no-fund
 
 COPY . .
+
+ARG VITE_SUPABASE_URL
+ARG VITE_SUPABASE_PUBLISHABLE_KEY
+
+ENV VITE_SUPABASE_URL=$VITE_SUPABASE_URL
+ENV VITE_SUPABASE_PUBLISHABLE_KEY=$VITE_SUPABASE_PUBLISHABLE_KEY
+
 RUN npm run build
 
 FROM node:22-alpine AS runtime
 WORKDIR /app
+
 ENV NODE_ENV=production
 ENV PORT=8080
 
