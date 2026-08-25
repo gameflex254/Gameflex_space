@@ -3,12 +3,15 @@ providers = ["node"]
 [variables]
 NODE_ENV = "production"
 NITRO_PRESET = "node_server"
+NPM_CONFIG_INCLUDE = "optional"
 
 [phases.setup]
 nixPkgs = ["nodejs_22"]
 
 [phases.install]
-cmds = ["npm ci"]
+cmds = [
+  "npm ci --legacy-peer-deps --include=optional --no-audit --no-fund"
+]
 
 [phases.build]
 cmds = ["npm run build"]
