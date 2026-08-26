@@ -1,7 +1,7 @@
 const BRAND = "GameFlex";
 const DEFAULT_TITLE = "GameFlex | The World's Premier Gaming Ecosystem";
 const DEFAULT_DESCRIPTION =
-  "The world's premier gaming ecosystem. Discover tournaments, squads, creator culture, and competitive gaming experiences in one platform.";
+  "The world's premier gaming ecosystem. Discover the complete gaming experience on one platform.";
 
 export interface PageSeoOptions {
   title?: string;
