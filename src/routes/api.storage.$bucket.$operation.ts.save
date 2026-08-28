@@ -146,20 +146,19 @@ export const Route = createFileRoute("/api/storage/$bucket/$operation")({
           }
 
           return json({ error: "Unsupported storage operation" }, 404);
-        } catch (error) {
-          console.error("R2 storage POST failed", error);
+        } } catch (error) {
+  console.error("R2 storage POST failed", error);
 
-          const message = error instanceof Error ? error.message : String(error);
+  const message = error instanceof Error ? error.message : String(error);
 
-          return json(
-            {
-              error: "Storage request failed",
-              details: message,
-            },
-            500,
-          );
-        }
-      },
+  return json(
+    {
+      error: "Storage request failed",
+      details: message,
+    },
+    500,
+  );
+}      },
     },
   },
 });
