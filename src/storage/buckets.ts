@@ -62,7 +62,7 @@ export const GAMEFLEX_BUCKET_REGISTRY: Record<
       "video/webm",
       "image/gif",
     ],
-    maxBytes: 10 * 1024 * 1024,
+    maxBytes: 25 * 1024 * 1024,
     objectKeyPattern: "stories/{userId}/{objectId}.{ext}",
   },
   "short-videos": {

@@ -12,7 +12,7 @@
     "format": "prettier --write .",
     "typecheck": "tsc --noEmit",
     "test": "tsx --test \"src/storage/**/*.test.ts\"",
-    "start": "node dist/server/index.mjs",
+    "start": "node --env-file=.env dist/server/index.mjs",
     "pm2:start": "npm run build && pm2 startOrRestart ecosystem.config.cjs --update-env",
     "pm2:reload": "npm run build && pm2 reload ecosystem.config.cjs --update-env",
     "pm2:logs": "pm2 logs gameflex",
